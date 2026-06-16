@@ -1,0 +1,5 @@
+# Local-only files — never ship to the public Pages site.
+preview.html
+*.png
+*.jpg
+*.jpeg

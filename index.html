@@ -3,40 +3,31 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Survey Results Dashboard Widget</title>
-  <meta name="description" content="GitHub Pages dashboard widget that combines three sums from legacy and current ArcGIS-hosted CSVs." />
+  <title>BrightWater Program Totals</title>
+  <meta name="description" content="BrightWater Foundation safe-water program totals — adults taught, Veronica buckets distributed, and chlorine tablets distributed." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap" />
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="dashboard-shell" aria-labelledby="dashboard-title">
-    <header class="dashboard-header">
-      <div>
-        <p class="eyebrow">Combined survey totals</p>
-        <h1 id="dashboard-title">Survey Results</h1>
-      </div>
-      <button id="refresh-button" type="button" class="refresh-button">Refresh</button>
-    </header>
-
-    <section id="status-panel" class="status-panel" role="status" aria-live="polite">
-      Loading survey totals…
-    </section>
-
-    <section id="metrics-grid" class="metrics-grid" aria-label="Combined totals">
-      <article class="metric-card placeholder">
-        <p class="metric-label">Metric 1</p>
-        <p class="metric-value">—</p>
+  <main class="indicators-shell" aria-label="BrightWater program totals">
+    <div id="indicators" class="indicators">
+      <!-- Indicator cells are rendered by app.js from config.js. This static
+           markup is a no-JS / loading fallback that mirrors the live layout. -->
+      <article class="indicator">
+        <p class="indicator-label">Adults taught Safe Water</p>
+        <p class="indicator-figure"><span class="indicator-value">—</span></p>
       </article>
-      <article class="metric-card placeholder">
-        <p class="metric-label">Metric 2</p>
-        <p class="metric-value">—</p>
+      <article class="indicator">
+        <p class="indicator-label">Veronica Buckets Distributed</p>
+        <p class="indicator-figure"><span class="indicator-value">—</span></p>
       </article>
-      <article class="metric-card placeholder">
-        <p class="metric-label">Metric 3</p>
-        <p class="metric-value">—</p>
+      <article class="indicator">
+        <p class="indicator-label">Chlorine Tablets Distributed</p>
+        <p class="indicator-figure"><span class="indicator-value">—</span></p>
       </article>
-    </section>
-
-    <section id="details-panel" class="details-panel" aria-label="Data source details" hidden></section>
+    </div>
   </main>
 
   <script src="config.js"></script>

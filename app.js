@@ -2,58 +2,59 @@
   "use strict";
 
   const config = window.DASHBOARD_CONFIG;
+  const grid = document.getElementById("indicators");
 
-  const els = {
-    title: document.getElementById("dashboard-title"),
-    eyebrow: document.querySelector(".eyebrow"),
-    status: document.getElementById("status-panel"),
-    grid: document.getElementById("metrics-grid"),
-    details: document.getElementById("details-panel"),
-    refreshButton: document.getElementById("refresh-button")
+  // Black silhouette icons matching the original ArcGIS dashboard. They inherit
+  // the surrounding text color via `fill="currentColor"`.
+  const ICONS = {
+    // Group of people under a roof — "Adults taught Safe Water".
+    people: `<svg viewBox="0 0 40 30" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M20 1 2 10h36L20 1z"/>
+        <circle cx="20" cy="15" r="3.6"/>
+        <path d="M20 19.5c-3.4 0-5.6 2.3-5.6 5.6V29h11.2v-3.9c0-3.3-2.2-5.6-5.6-5.6z"/>
+        <circle cx="8.5" cy="17.5" r="2.9"/>
+        <path d="M8.5 21.4c-2.7 0-4.5 1.9-4.5 4.6V29h9v-3c0-2.7-1.8-4.6-4.5-4.6z"/>
+        <circle cx="31.5" cy="17.5" r="2.9"/>
+        <path d="M31.5 21.4c-2.7 0-4.5 1.9-4.5 4.6V29h9v-3c0-2.7-1.8-4.6-4.5-4.6z"/>
+      </svg>`,
+    // Tapered bucket with handle — "Veronica Buckets Distributed".
+    bucket: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M5 4a7 3 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M3.6 6.2h16.8l-1.7 13.5A2.6 2.6 0 0 1 16.1 22H7.9a2.6 2.6 0 0 1-2.6-2.3L3.6 6.2z"/>
+      </svg>`,
+    // Water droplet — "Chlorine Tablets Distributed".
+    drop: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
+        <path d="M12 2S4 11 4 16a8 8 0 0 0 16 0C20 11 12 2 12 2z"/>
+      </svg>`
   };
 
-  if (!config) {
-    renderConfigError("Missing DASHBOARD_CONFIG. Check that config.js is loaded before app.js.");
+  if (!config || !Array.isArray(config.metrics) || config.metrics.length === 0) {
+    // Nothing meaningful to render; leave the static fallback markup in place.
+    console.error("BWF dashboard: missing DASHBOARD_CONFIG or metrics in config.js.");
     return;
   }
 
-  els.title.textContent = config.title || "Survey Results";
-  els.eyebrow.textContent = config.subtitle || "Combined survey totals";
-  els.refreshButton.addEventListener("click", loadDashboard);
+  if (config.title) {
+    document.title = config.title;
+  }
 
   loadDashboard();
 
   async function loadDashboard() {
-    setLoading();
-
-    // Structural config problems are a hard error (nothing meaningful to show).
-    try {
-      validateConfig(config);
-    } catch (error) {
-      renderConfigError(error.message || String(error));
-      return;
-    }
-
-    // Data problems degrade gracefully: every card falls back to "—".
     let totalsById = {};
-    let loadError = null;
-    let rowCount = 0;
 
     const url = totalsUrl(config.source);
-    if (!url) {
-      loadError = "Totals source is not configured yet — paste the dashboard_totals item GUID into config.js.";
-    } else {
+    if (url) {
       try {
-        const parsed = parseCsv(await fetchText(url, config.cacheBust));
-        totalsById = indexTotals(parsed);
-        rowCount = parsed.rows.length;
+        totalsById = indexTotals(parseCsv(await fetchText(url, config.cacheBust)));
       } catch (error) {
-        loadError = error.message || String(error);
-        console.error(error);
+        console.error("BWF dashboard: failed to load totals —", error);
       }
+    } else {
+      console.warn("BWF dashboard: totals source is not configured (config.js source.itemId/url).");
     }
 
-    renderMetrics({ totalsById, loadError, rowCount, loadedAt: new Date() });
+    render(totalsById);
   }
 
   // Resolve the totals CSV URL: prefer an explicit `url`, otherwise build it
@@ -65,17 +66,6 @@
       return `https://bwf.maps.arcgis.com/sharing/rest/content/items/${encodeURIComponent(source.itemId)}/data`;
     }
     return null;
-  }
-
-  function validateConfig(cfg) {
-    if (!Array.isArray(cfg.metrics) || cfg.metrics.length === 0) {
-      throw new Error("No metrics configured. Add metrics in config.js.");
-    }
-    for (const metric of cfg.metrics) {
-      if (!metric.id || !metric.label) {
-        throw new Error("Each metric needs an id and a label in config.js.");
-      }
-    }
   }
 
   async function fetchText(url, cacheBust) {
@@ -91,7 +81,7 @@
     });
 
     if (!response.ok) {
-      throw new Error(`Failed to fetch totals. HTTP ${response.status} ${response.statusText}`);
+      throw new Error(`HTTP ${response.status} ${response.statusText}`);
     }
 
     return response.text();
@@ -171,91 +161,40 @@
     return Number(normalized);
   }
 
-  function setLoading() {
-    els.status.className = "status-panel";
-    els.status.textContent = "Loading totals…";
-    els.details.hidden = true;
-    els.grid.innerHTML = config.metrics.map((metric) => `
-      <article class="metric-card placeholder">
-        <p class="metric-label">${escapeHtml(metric.label)}</p>
-        <p class="metric-value">—</p>
-      </article>
-    `).join("");
-  }
-
-  function renderMetrics(meta) {
-    const { totalsById, loadError, rowCount, loadedAt } = meta;
-
-    let missing = 0;
-    els.grid.innerHTML = config.metrics.map((metric) => {
+  function render(totalsById) {
+    grid.innerHTML = config.metrics.map((metric) => {
       const raw = totalsById ? totalsById[metric.id] : undefined;
       const value = toNumber(raw);
       const hasValue = raw !== undefined && Number.isFinite(value);
-      if (!hasValue) missing++;
+      const display = hasValue ? formatValue(value, metric) : "—";
+      const icon = ICONS[metric.icon] || "";
+
       return `
-        <article class="metric-card${hasValue ? "" : " unavailable"}">
-          <p class="metric-label">${escapeHtml(metric.label)}</p>
-          <p class="metric-value">${hasValue ? formatNumber(value, metric.decimals) : "—"}</p>
-          ${hasValue ? "" : `<p class="metric-note">No data found for "${escapeHtml(metric.id)}".</p>`}
+        <article class="indicator${hasValue ? "" : " unavailable"}">
+          <p class="indicator-label">${escapeHtml(metric.label)}</p>
+          <p class="indicator-figure">
+            ${icon ? `<span class="indicator-icon">${icon}</span>` : ""}
+            <span class="indicator-value">${escapeHtml(display)}</span>
+          </p>
         </article>
       `;
     }).join("");
+  }
 
-    if (loadError) {
-      els.status.className = "status-panel error";
-      els.status.textContent = loadError;
-    } else {
-      els.status.className = "status-panel success";
-      els.status.textContent =
-        `Updated ${formatDateTime(loadedAt)} from ${rowCount.toLocaleString()} metric row${rowCount === 1 ? "" : "s"}.` +
-        (missing ? ` ${missing} metric${missing === 1 ? "" : "s"} unavailable.` : "");
+  // Compact notation to mirror the old dashboard (51,900 -> "51.9k", 633,000 ->
+  // "633k"). Lowercases the magnitude suffix to match the original's "k".
+  function formatValue(value, metric) {
+    if (metric.compact) {
+      const compact = new Intl.NumberFormat(undefined, {
+        notation: "compact",
+        maximumFractionDigits: 1
+      }).format(value);
+      return compact.replace(/K\b/, "k");
     }
-
-    const url = totalsUrl(config.source);
-    const haveUrl = !!url;
-    els.details.hidden = false;
-    els.details.innerHTML = `
-      ${config.footerNote ? `<p>${escapeHtml(config.footerNote)}</p>` : ""}
-      <details>
-        <summary>Data source</summary>
-        <dl class="source-details">
-          <div><dt>Source</dt><dd>${haveUrl ? `<a href="${escapeAttribute(url)}" target="_blank" rel="noopener">Open source</a>` : "Not configured"}</dd></div>
-          <div><dt>Metric rows</dt><dd>${rowCount.toLocaleString()}</dd></div>
-        </dl>
-      </details>
-    `;
-  }
-
-  // Hard config error: render every configured card as "—" plus an explanatory
-  // status, so the page still degrades gracefully rather than going blank.
-  function renderConfigError(message) {
-    els.status.className = "status-panel error";
-    els.status.textContent = message;
-    els.grid.innerHTML = (Array.isArray(config.metrics) ? config.metrics : []).map((metric) => `
-      <article class="metric-card unavailable">
-        <p class="metric-label">${escapeHtml(metric.label || metric.id || "Metric")}</p>
-        <p class="metric-value">—</p>
-      </article>
-    `).join("");
-    els.details.hidden = false;
-    els.details.innerHTML = `<p>Review <code>config.js</code>: the totals source URL and the metric <code>id</code>/<code>label</code> entries.</p>`;
-  }
-
-  function formatNumber(value, decimals = 0) {
     return new Intl.NumberFormat(undefined, {
-      minimumFractionDigits: decimals,
-      maximumFractionDigits: decimals
+      minimumFractionDigits: metric.decimals || 0,
+      maximumFractionDigits: metric.decimals || 0
     }).format(value);
-  }
-
-  function formatDateTime(date) {
-    return new Intl.DateTimeFormat(undefined, {
-      year: "numeric",
-      month: "short",
-      day: "numeric",
-      hour: "numeric",
-      minute: "2-digit"
-    }).format(date);
   }
 
   function escapeHtml(value) {
@@ -265,9 +204,5 @@
       .replaceAll(">", "&gt;")
       .replaceAll('"', "&quot;")
       .replaceAll("'", "&#039;");
-  }
-
-  function escapeAttribute(value) {
-    return escapeHtml(value);
   }
 })();
