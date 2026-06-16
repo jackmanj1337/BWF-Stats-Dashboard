@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Survey Results Dashboard Widget</title>
+  <meta name="description" content="GitHub Pages dashboard widget that combines three sums from legacy and current ArcGIS-hosted CSVs." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="dashboard-shell" aria-labelledby="dashboard-title">
+    <header class="dashboard-header">
+      <div>
+        <p class="eyebrow">Combined survey totals</p>
+        <h1 id="dashboard-title">Survey Results</h1>
+      </div>
+      <button id="refresh-button" type="button" class="refresh-button">Refresh</button>
+    </header>
+
+    <section id="status-panel" class="status-panel" role="status" aria-live="polite">
+      Loading survey totals…
+    </section>
+
+    <section id="metrics-grid" class="metrics-grid" aria-label="Combined totals">
+      <article class="metric-card placeholder">
+        <p class="metric-label">Metric 1</p>
+        <p class="metric-value">—</p>
+      </article>
+      <article class="metric-card placeholder">
+        <p class="metric-label">Metric 2</p>
+        <p class="metric-value">—</p>
+      </article>
+      <article class="metric-card placeholder">
+        <p class="metric-label">Metric 3</p>
+        <p class="metric-value">—</p>
+      </article>
+    </section>
+
+    <section id="details-panel" class="details-panel" aria-label="Data source details" hidden></section>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
