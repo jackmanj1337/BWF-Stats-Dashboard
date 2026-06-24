@@ -206,13 +206,18 @@
     const prefix = change > 0 ? "+ " : change < 0 ? "- " : "";
     const magnitude = formatValue(Math.abs(change), { compact: true });
     const period = formatPeriod(row);
+    if (!period) return "";
 
-    return period ? `${prefix}${magnitude} ${period}` : `${prefix}${magnitude}`;
+    return `${prefix}${magnitude} ${period}`;
   }
 
   function formatPeriod(row) {
     const period = String(row.change_period || "").trim();
-    const start = parseDate(row.change_period_start);
+    const startText = String(row.change_period_start || "").trim();
+    if (!period || !startText) return "";
+
+    const start = parseDate(startText);
+    if (!start) return "";
 
     if (period === "last_30_days") {
       return "in the last 30 days";
@@ -224,10 +229,6 @@
 
     if (period === "current_year" && start) {
       return `since start of ${start.getUTCFullYear()}`;
-    }
-
-    if (period) {
-      return period.replaceAll("_", " ");
     }
 
     return "";

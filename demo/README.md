@@ -16,6 +16,8 @@ adults_taught,51900,382,last_30_days,2026-05-25
 
 The pipeline should calculate `total` and `recent_change`. The dashboard formats
 the final note from `recent_change`, `change_period`, and `change_period_start`.
+If any of those recent-change fields are missing or malformed for a metric, the
+dashboard hides that metric's recent-change note and still shows the main total.
 
 To preview a different data set, update `source.url` in `config.js`, for example:
 
