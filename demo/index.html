@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BrightWater Demo Dashboard</title>
+  <meta name="description" content="BrightWater Foundation demo dashboard for reviewing alternate layouts and aggregate data sets." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600;700&display=swap" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="indicators-shell" aria-label="BrightWater demo dashboard">
+    <div id="indicators" class="indicators">
+      <!-- Indicator cells are rendered by app.js from config.js. This static
+           markup is a no-JS / loading fallback that mirrors the live layout. -->
+      <article class="indicator">
+        <p class="indicator-label">Adults taught Safe Water</p>
+        <p class="indicator-figure"><span class="indicator-value">—</span></p>
+      </article>
+      <article class="indicator">
+        <p class="indicator-label">Veronica Buckets Distributed</p>
+        <p class="indicator-figure"><span class="indicator-value">—</span></p>
+      </article>
+      <article class="indicator">
+        <p class="indicator-label">Chlorine Tablets Distributed</p>
+        <p class="indicator-figure"><span class="indicator-value">—</span></p>
+      </article>
+    </div>
+  </main>
+
+  <script src="config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

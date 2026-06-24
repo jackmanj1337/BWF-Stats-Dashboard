@@ -1,0 +1,131 @@
+/*
+  BrightWater "Our Numbers Speak for themselves" indicator bar.
+
+  A faithful restyle of the old ArcGIS dashboard: one bordered bar split into
+  three cells, each with a centered label, then a black icon beside a large
+  compact number. BrightWater brand font (Josefin Sans) and near-black text.
+
+  Brand palette (from brightwaterfoundation.org Elementor kit):
+    primary  #14679A   secondary/ink #13191E   text #424242
+    accent   #EDEDED    pale blue #E6F1F7
+
+  The page background is transparent so the widget drops cleanly into either
+  the website's statistics section or an ArcGIS dashboard iframe.
+*/
+:root {
+  --ink: #13191E;        /* labels, icons, numbers (near-black, like the original) */
+  --muted: #424242;      /* brand body text */
+  --divider: #e2e8f0;    /* hairline dividers / bar border */
+  --surface: #ffffff;    /* the white bar */
+  --brand: #14679A;      /* reserved for any future accent */
+  --font: "Josefin Sans", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  background: transparent;        /* inherit the host page / iframe background */
+  color: var(--ink);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+}
+
+body {
+  padding: 8px;
+}
+
+.indicators-shell {
+  width: min(100%, 1200px);
+  margin: 0 auto;
+}
+
+/* The bordered bar that holds the three indicator cells. */
+.indicators {
+  display: flex;
+  align-items: stretch;
+  background: var(--surface);
+  border: 1px solid var(--divider);
+}
+
+/* One indicator cell: centered label over an icon + number. */
+.indicator {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 22px 18px 26px;
+  text-align: center;
+}
+
+/* Hairline divider between cells (skip the first). */
+.indicator + .indicator {
+  border-left: 1px solid var(--divider);
+}
+
+.indicator-label {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 700;
+  font-size: clamp(0.95rem, 1.4vw, 1.35rem);
+  line-height: 1.15;
+}
+
+/* Icon and number sit on one centered row, like the original. */
+.indicator-figure {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  color: var(--ink);
+}
+
+.indicator-icon {
+  flex: none;
+  display: inline-flex;
+  width: clamp(2rem, 4.5vw, 3.4rem);
+  height: clamp(2rem, 4.5vw, 3.4rem);
+}
+
+.indicator-icon svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.indicator-value {
+  font-weight: 700;
+  font-size: clamp(2.1rem, 5.5vw, 4rem);
+  line-height: 1;
+  letter-spacing: -0.01em;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Missing/unavailable data degrades to a plain dash, no other chrome. */
+.indicator.unavailable .indicator-value,
+.indicator.unavailable .indicator-icon {
+  opacity: 0.45;
+}
+
+/* Stack vertically on narrow screens; dividers become horizontal. */
+@media (max-width: 720px) {
+  .indicators {
+    flex-direction: column;
+  }
+
+  .indicator + .indicator {
+    border-left: 0;
+    border-top: 1px solid var(--divider);
+  }
+
+  .indicator {
+    padding: 18px 16px;
+  }
+}
