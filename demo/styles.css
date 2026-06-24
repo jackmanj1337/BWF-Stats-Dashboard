@@ -59,8 +59,9 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 10px;
-  padding: 22px 18px 26px;
+  justify-content: flex-start;
+  gap: 8px;
+  padding: 18px 10px 8px;
   text-align: center;
 }
 
@@ -108,9 +109,22 @@ body {
   font-variant-numeric: tabular-nums;
 }
 
+.indicator-note {
+  width: 100%;
+  margin: auto 0 0;
+  color: var(--muted);
+  font-family: Arial, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  font-size: clamp(0.72rem, 1.05vw, 0.82rem);
+  font-weight: 700;
+  line-height: 1.15;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
 /* Missing/unavailable data degrades to a plain dash, no other chrome. */
 .indicator.unavailable .indicator-value,
-.indicator.unavailable .indicator-icon {
+.indicator.unavailable .indicator-icon,
+.indicator.unavailable .indicator-note {
   opacity: 0.45;
 }
 

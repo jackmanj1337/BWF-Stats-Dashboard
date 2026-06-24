@@ -41,12 +41,12 @@
   loadDashboard();
 
   async function loadDashboard() {
-    let totalsById = {};
+    let metricsById = {};
 
     const url = totalsUrl(config.source);
     if (url) {
       try {
-        totalsById = indexTotals(parseCsv(await fetchText(url, config.cacheBust)));
+        metricsById = indexMetrics(parseCsv(await fetchText(url, config.cacheBust)));
       } catch (error) {
         console.error("BWF dashboard: failed to load totals —", error);
       }
@@ -54,7 +54,7 @@
       console.warn("BWF dashboard: totals source is not configured (config.js source.itemId/url).");
     }
 
-    render(totalsById);
+    render(metricsById);
   }
 
   // Resolve the totals CSV URL: prefer an explicit `url`, otherwise build it
@@ -140,8 +140,8 @@
     return { headers, rows: records };
   }
 
-  // Build a { metric_id: total } lookup from the parsed CSV.
-  function indexTotals(parsed) {
+  // Build a { metric_id: row } lookup from the parsed CSV.
+  function indexMetrics(parsed) {
     if (!parsed.headers.includes("metric_id") || !parsed.headers.includes("total")) {
       throw new Error(
         `Totals CSV must have 'metric_id' and 'total' columns. Found: ${parsed.headers.join(", ")}`
@@ -149,7 +149,7 @@
     }
     const byId = {};
     for (const row of parsed.rows) {
-      byId[String(row.metric_id).trim()] = row.total;
+      byId[String(row.metric_id).trim()] = row;
     }
     return byId;
   }
@@ -161,12 +161,13 @@
     return Number(normalized);
   }
 
-  function render(totalsById) {
+  function render(metricsById) {
     grid.innerHTML = config.metrics.map((metric) => {
-      const raw = totalsById ? totalsById[metric.id] : undefined;
-      const value = toNumber(raw);
-      const hasValue = raw !== undefined && Number.isFinite(value);
+      const row = metricsById ? metricsById[metric.id] : undefined;
+      const value = toNumber(row && row.total);
+      const hasValue = row !== undefined && Number.isFinite(value);
       const display = hasValue ? formatValue(value, metric) : "—";
+      const note = row ? formatChangeNote(row) : "";
       const icon = ICONS[metric.icon] || "";
 
       return `
@@ -176,6 +177,7 @@
             ${icon ? `<span class="indicator-icon">${icon}</span>` : ""}
             <span class="indicator-value">${escapeHtml(display)}</span>
           </p>
+          ${note ? `<p class="indicator-note">${escapeHtml(note)}</p>` : ""}
         </article>
       `;
     }).join("");
@@ -195,6 +197,56 @@
       minimumFractionDigits: metric.decimals || 0,
       maximumFractionDigits: metric.decimals || 0
     }).format(value);
+  }
+
+  function formatChangeNote(row) {
+    const change = toNumber(row.recent_change);
+    if (!Number.isFinite(change)) return "";
+
+    const prefix = change > 0 ? "+ " : change < 0 ? "- " : "";
+    const magnitude = formatValue(Math.abs(change), { compact: true });
+    const period = formatPeriod(row);
+
+    return period ? `${prefix}${magnitude} ${period}` : `${prefix}${magnitude}`;
+  }
+
+  function formatPeriod(row) {
+    const period = String(row.change_period || "").trim();
+    const start = parseDate(row.change_period_start);
+
+    if (period === "last_30_days") {
+      return "in the last 30 days";
+    }
+
+    if (period === "since_date" && start) {
+      return `since ${formatDate(start)}`;
+    }
+
+    if (period === "current_year" && start) {
+      return `since start of ${start.getUTCFullYear()}`;
+    }
+
+    if (period) {
+      return period.replaceAll("_", " ");
+    }
+
+    return "";
+  }
+
+  function parseDate(value) {
+    const text = String(value || "").trim();
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return null;
+    const date = new Date(`${text}T00:00:00Z`);
+    return Number.isNaN(date.getTime()) ? null : date;
+  }
+
+  function formatDate(date) {
+    return new Intl.DateTimeFormat(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+      timeZone: "UTC"
+    }).format(date);
   }
 
   function escapeHtml(value) {
