@@ -6,8 +6,10 @@
 
   // Black silhouette icons matching the original ArcGIS dashboard. They inherit
   // the surrounding text color via `fill="currentColor"`.
-  const ICONS = {
-    // Group of people under a roof — "Adults taught Safe Water".
+  /*
+  Previous main-site icons, kept for reference:
+
+  const OLD_ICONS = {
     people: `<svg viewBox="0 0 40 30" fill="currentColor" aria-hidden="true" focusable="false">
         <path d="M20 1 2 10h36L20 1z"/>
         <circle cx="20" cy="15" r="3.6"/>
@@ -17,15 +19,64 @@
         <circle cx="31.5" cy="17.5" r="2.9"/>
         <path d="M31.5 21.4c-2.7 0-4.5 1.9-4.5 4.6V29h9v-3c0-2.7-1.8-4.6-4.5-4.6z"/>
       </svg>`,
-    // Tapered bucket with handle — "Veronica Buckets Distributed".
     bucket: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
         <path d="M5 4a7 3 0 0 1 14 0" fill="none" stroke="currentColor" stroke-width="1.8"/>
         <path d="M3.6 6.2h16.8l-1.7 13.5A2.6 2.6 0 0 1 16.1 22H7.9a2.6 2.6 0 0 1-2.6-2.3L3.6 6.2z"/>
       </svg>`,
-    // Water droplet — "Chlorine Tablets Distributed".
     drop: `<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true" focusable="false">
         <path d="M12 2S4 11 4 16a8 8 0 0 0 16 0C20 11 12 2 12 2z"/>
       </svg>`
+  };
+  */
+  const ICONS = {
+    // Group of people under a roof — "Adults taught Safe Water".
+    people: `<svg viewBox="0 0 38.775467 34.456299" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <g transform="translate(-5.7508 -196.78915)">
+    <path fill="currentColor" d="M 25.138539,201.48443 10.758032,212.97391 H 5.7508049 l 19.3877341,-16.18476 19.387734,16.18476 h -5.007227 z" />
+    <circle fill="currentColor" cx="12.010562" cy="217.9059" r="3.9120116" />
+    <path fill="currentColor" d="m 6.7639751,231.24545 v -2.19064 c -1.8e-6,-2.89761 2.3489757,-5.24659 5.2465869,-5.24659 2.897611,0 5.246589,2.34898 5.246587,5.24659 v 2.19064 z" />
+    <circle fill="currentColor" cx="25.404842" cy="213.39261" r="3.9120116" />
+    <path fill="currentColor" d="m 20.158256,231.24545 v -6.70393 c -2e-6,-2.89761 2.348975,-5.24659 5.246586,-5.24659 2.897611,0 5.246589,2.34898 5.246587,5.24659 v 6.70393 z" />
+    <circle fill="currentColor" cx="38.507942" cy="217.95442" r="3.9120116" />
+    <path fill="currentColor" d="m 33.261355,231.24545 v -2.14212 c 4e-6,-2.89761 2.34898,-5.24658 5.246587,-5.24658 2.897607,0 5.246583,2.34897 5.246587,5.24658 v 2.14212 z" />
+  </g>
+</svg>`,
+    // Tapered bucket with handle — "Veronica Buckets Distributed".
+    bucket: `<svg viewBox="-1.5 -1.5 37.024281 41.290207" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <g transform="translate(-380.83415 -304.1894)">
+    <path fill="currentColor" d="m 397.11275,304.18945 a 10.82896,7.255235 0 0 0 -5.45291,0.97203 10.82896,7.255235 0 0 0 -5.40276,5.94382 h -5.42293 l 5.84822,31.37431 h 20.36929 l 1.22576,-6.5753 h 0.43823 c 2.03883,-0.082 2.574,0.43527 2.574,2.43602 v 0.84077 h 3.56878 v -3.27679 c 0,-1.97104 -1.59776,-3.56878 -3.56878,-3.56878 h -2.34714 l 3.95687,-21.23023 h -5.00796 a 10.82896,7.255235 0 0 0 -5.40279,-5.94382 10.82896,7.255235 0 0 0 -5.37588,-0.97203 z m -0.009,2.96054 a 7.6017151,3.9309301 0 0 1 3.77135,0.52658 7.6017151,3.9309301 0 0 1 3.80079,3.40444 h -7.60161 -7.60211 a 7.6017151,3.9309301 0 0 1 3.80132,-3.40444 7.6017151,3.9309301 0 0 1 3.83026,-0.52658 z" />
+  </g>
+</svg>`,
+    // Water droplet — "Chlorine Tablets Distributed".
+    drop: `<svg viewBox="0 0 29.305786 26.291726" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+  <g transform="translate(-445.66048 -314.676)">
+    <path
+      fill="currentColor"
+      d="m 474.96627,340.73618 c -3.61961,0.65191 -6.43294,-1.28167 -7.68676,-3.50022 0,0 -1.75622,3.65465 -6.67445,3.65465 -4.91823,0 -6.67445,-3.65465 -6.67445,-3.65465 -1.63016,2.21223 -3.57563,4.14624 -8.27013,3.65465 v -3.0198 c 4.6945,0.49159 6.63997,-1.44242 8.27013,-3.65465 0,0 1.75622,3.65465 6.67445,3.65465 4.91823,0 6.67445,-3.65465 6.67445,-3.65465 1.25382,2.21855 4.06715,4.15213 7.68676,3.50022 z" />
+    <circle
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.80737"
+      stroke-linecap="round"
+      cx="237.06622"
+      cy="510.55258"
+      r="8.0416098"
+      transform="rotate(-30)" />
+    <path
+      fill="currentColor"
+      stroke="currentColor"
+      stroke-width="0.16"
+      d="m 235.98859,518.52166 a 8.0416098,8.0416098 0 0 1 -6.96398,-7.97393 8.0416098,8.0416098 0 0 1 6.9736,-7.96552"
+      transform="rotate(-30)" />
+    <path
+      fill="currentColor"
+      stroke="currentColor"
+      stroke-width="0.16"
+      d="m -238.14385,518.52233 a 8.0416098,8.0416098 0 0 1 -6.96398,-7.97393 8.0416098,8.0416098 0 0 1 6.97359,-7.96552"
+      transform="matrix(-0.8660254,0.5,0.5,0.8660254,0,0)" />
+  </g>
+</svg>
+`
   };
 
   if (!config || !Array.isArray(config.metrics) || config.metrics.length === 0) {
