@@ -242,21 +242,30 @@
 
   function formatPeriod(row) {
     const period = String(row.change_period || "").trim();
-    const startText = String(row.change_period_start || "").trim();
-    if (!period || !startText) return "";
+    if (!period) return "";
 
-    const start = parseDate(startText);
+    // Generic rolling window: "in the last <N> days", where N is read from the
+    // CSV column `change_period_days`. No start date is needed for this period.
+    if (period === "last_n_days") {
+      const days = toNumber(row.change_period_days);
+      if (!Number.isFinite(days) || days <= 0) return "";
+      const unit = days === 1 ? "day" : "days";
+      return `in the last ${new Intl.NumberFormat().format(days)} ${unit}`;
+    }
+
+    // The date-anchored periods below still require a valid change_period_start.
+    const start = parseDate(String(row.change_period_start || "").trim());
     if (!start) return "";
 
     if (period === "last_30_days") {
       return "in the last 30 days";
     }
 
-    if (period === "since_date" && start) {
+    if (period === "since_date") {
       return `since ${formatDate(start)}`;
     }
 
-    if (period === "current_year" && start) {
+    if (period === "current_year") {
       return `since start of ${start.getUTCFullYear()}`;
     }
 

@@ -1,4 +1,4 @@
-metric_id,total,recent_change,change_period,change_period_start
-adults_taught,51900,382,last_30_days,2026-05-25
-veronica_buckets,12400,87,since_date,2026-05-25
-tablets,845000,103000,current_year,2026-01-01
+metric_id,total,recent_change,change_period,change_period_start,change_period_days
+adults_taught,51900,382,last_n_days,2026-05-25,90
+veronica_buckets,12400,87,last_n_days,2026-05-25,60
+tablets,845000,103000,last_n_days,2026-01-01,30

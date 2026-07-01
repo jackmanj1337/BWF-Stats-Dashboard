@@ -1,6 +1,6 @@
-metric_id,total,recent_change,change_period,change_period_start
-adults_taught,68150,614,last_30_days,2026-05-25
-veronica_buckets,18925,143,since_date,2026-05-25
-tablets,1124000,151000,current_year,2026-01-01
-households_reached,27400,290,last_30_days,2026-05-25
-schools_visited,318,11,current_year,2026-01-01
+metric_id,total,recent_change,change_period,change_period_start,change_period_days
+adults_taught,68150,614,last_n_days,2026-05-25,90
+veronica_buckets,18925,143,since_date,2026-05-25,
+tablets,1124000,151000,current_year,2026-01-01,
+households_reached,27400,290,last_n_days,2026-05-25,45
+schools_visited,318,11,current_year,2026-01-01,
